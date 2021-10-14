@@ -6,6 +6,15 @@ let maxCells = 10;
 for (let i = 0; i < 100; i++) {
 	let cell = document.createElement("div");
 	cell.classList.add("cell");
+
+	// Add event for regular click
+	cell.addEventListener("click", (e) => {});
+
+	// Add event for right click
+	cell.addEventListener("contextmenu", (e) => {
+		e.preventDefault();
+	});
+
 	gameBoardRow.append(cell);
 	cellNumber++;
 	if (cellNumber === maxCells) {
