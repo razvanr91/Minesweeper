@@ -2,21 +2,44 @@
 	width: 610px;
 	height: 610px;
 	background-color: rgb(201, 201, 201);
-    border: 5px solid rgb(153, 153, 153);
-    border-radius: 1%;
-    justify-content: flex-start;
+	border: 5px solid rgb(153, 153, 153);
+	border-radius: 0% 0% 1% 0%;
+	justify-content: flex-start;
 }
 
 .cell {
-    width: 60px;
-    height: 60px;
-    background-color: rgb(170, 170, 170);
-    border: 5px solid rgb(245, 245, 245);
-    border-radius: 10%;
-    box-sizing: border-box
+	width: 60px;
+	height: 60px;
+	background-color: rgb(170, 170, 170);
+	border: 5px solid rgb(245, 245, 245);
+	border-radius: 10%;
+	box-sizing: border-box;
 }
 
 .cell:hover {
-    background-color: grey;
-    border-color: rgb(197, 197, 197);
+	background-color: grey;
+	border-color: rgb(197, 197, 197);
+}
+
+.infoBoard {
+	width: 610px;
+	height: 100px;
+	background-color: rgb(170, 170, 170);
+	border: 5px solid rgb(153, 153, 153);
+	border-radius: 1% 0% 0% 0%;
+	box-sizing: border-box;
+    display: flex;
+}
+
+.flagInfo {
+    width: 300px;
+    height: 90px;
+    background-color: black;
+    
+}
+
+.bombInfo {
+    width: 300px;
+    height: 90px;
+    background-color: black;
 }

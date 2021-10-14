@@ -16,11 +16,22 @@
 			integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
 			crossorigin="anonymous"
 		/>
+		<script
+			src="https://kit.fontawesome.com/f620239d53.js"
+			crossorigin="anonymous"
+		></script>
 		<link rel="stylesheet" href="styles.css" />
 	</head>
 
 	<body>
 		<div class="container">
+			<div class="infoBoard" id="informationBoard">
+				<div class="flagInfo fs-1 text-danger text-center" id="flags">10</div>
+				<button class="btn btn-secondary fs-1 text-warning" id="reset">
+					<i class="fas fa-smile"></i>
+				</button>
+				<div class="bombInfo fs-1 text-danger text-center" id="bombs">10</div>
+			</div>
 			<div class="board" id="gameBoard">
 				<div class="row g-0" id="gameBoardRow"></div>
 			</div>
