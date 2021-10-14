@@ -1,0 +1,22 @@
+.board {
+	width: 610px;
+	height: 610px;
+	background-color: rgb(201, 201, 201);
+    border: 5px solid rgb(153, 153, 153);
+    border-radius: 1%;
+    justify-content: flex-start;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+    background-color: rgb(170, 170, 170);
+    border: 5px solid rgb(245, 245, 245);
+    border-radius: 10%;
+    box-sizing: border-box
+}
+
+.cell:hover {
+    background-color: grey;
+    border-color: rgb(197, 197, 197);
+}
