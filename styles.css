@@ -21,6 +21,11 @@
 	border-color: rgb(197, 197, 197);
 }
 
+.clicked-cell {
+	background-color: grey;
+	border-color: rgb(94, 93, 93);
+}
+
 .infoBoard {
 	width: 610px;
 	height: 100px;
