@@ -52,9 +52,10 @@ function clickCell(cell) {
 	if (checkForBombs(cellId) && !gameOver) {
 		cell.innerHTML = `<i class="fas fa-bomb fs-1 mt-1"></i>`;
 		// return (gameOver = true);
+	} else if (!cell.classList.contains("clicked-cell")) {
+		checkCell(cellId);
 	}
 	cell.classList.add("clicked-cell");
-	checkCell(cellId);
 }
 
 function checkCell(id) {
@@ -63,6 +64,16 @@ function checkCell(id) {
 
 	if (!leftWallCell && id > 0) {
 		let newCell = document.getElementById(id - 1);
+		if (!checkForBombs(newCell.id)) {
+			clickCell(newCell);
+		} else {
+			document.getElementById(id).innerHTML = "1";
+		}
+	}
+
+	if (!rightWallCell && id > 9) {
+		console.log(id + 1 - maxCellsRow);
+		let newCell = document.getElementById(id + 1 - maxCellsRow);
 		if (!checkForBombs(newCell.id)) clickCell(newCell);
 	}
 }
@@ -80,11 +91,16 @@ function createColumn() {
 function generateRandomNumberArray(size) {
 	let numbers = [];
 	while (numbers.length < size) {
-		let number = Math.floor(Math.random() * totalCells + 1);
-		if (numbers.includes(number)) {
-			number = Math.floor(Math.random() * totalCells + 1);
-		} else {
+		let number = Math.floor(Math.random() * totalCells);
+		if(number === 0 && !numbers.includes(number)) {
 			numbers.push(number);
+		} else {
+			number++
+			if (numbers.includes(number)) {
+				number = Math.floor(Math.random() * totalCells + 1);
+			} else {
+				numbers.push(number);
+			}
 		}
 	}
 	return numbers;
