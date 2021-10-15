@@ -49,26 +49,22 @@ function createCell(id) {
 
 function clickCell(cell) {
 	let cellId = parseInt(cell.id);
-	if (checkForBombs(cell.id) && !gameOver) {
+	if (checkForBombs(cellId) && !gameOver) {
 		cell.innerHTML = `<i class="fas fa-bomb fs-1 mt-1"></i>`;
 		// return (gameOver = true);
 	}
 	cell.classList.add("clicked-cell");
-	if (!checkForBombs(cellId + 1)) {
-		clickCell(document.getElementById(cellId + 1));
-	} else {
-		cell.innerHTML = "1";
-	}
+	checkCell(cellId);
 }
 
 function checkCell(id) {
 	let rightWallCell = id % maxCellsRow === maxCellsRow - 1;
 	let leftWallCell = id % maxCellsRow === 0;
 
-	if(leftWallCell && id < 9) {
-		clickCell(id + 1);
+	if (!leftWallCell && id > 0) {
+		let newCell = document.getElementById(id - 1);
+		if (!checkForBombs(newCell.id)) clickCell(newCell);
 	}
-
 }
 
 function checkForBombs(id) {
@@ -83,7 +79,7 @@ function createColumn() {
 
 function generateRandomNumberArray(size) {
 	let numbers = [];
-	for (let i = 0; i < size; i++) {
+	while (numbers.length < size) {
 		let number = Math.floor(Math.random() * totalCells + 1);
 		if (numbers.includes(number)) {
 			number = Math.floor(Math.random() * totalCells + 1);
