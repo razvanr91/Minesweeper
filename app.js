@@ -15,6 +15,12 @@ console.log(bombsArray);
 function generateBoard() {
 	for (let i = 0; i < totalCells; i++) {
 		let cell = createCell(i);
+		if (!bombsArray.includes(i)) {
+			gameArray[i] = "clear";
+		} else {
+			gameArray[i] = "bomb";
+		}
+		cell.innerHTML = gameArray[i];
 		gameBoardRow.append(cell);
 		cellNumber++;
 		if (cellNumber === maxCellsRow) {
@@ -23,12 +29,27 @@ function generateBoard() {
 			cellNumber = 0;
 		}
 	}
+
+	for(let i = 0; i < totalCells; i++) {
+		let leftWallCell = i % maxCellsRow === 0;
+		let rightWallCell = i % maxCellsRow === maxCellsRow - 1;
+		let nearbyBombs = 0;
+		if(gameArray[i] === "clear") {
+			if(leftWallCell && i < 10 && gameArray[i+maxCellsRow] === "bomb") nearbyBombs++;
+			if(rightWallCell && i > 0 && gameArray[i+maxCellsRow] === "bomb") nearbyBombs++;
+			if(i < 9 && gameArray[i - 1] === "bomb") nearbyBombs++;
+			document.getElementById(i).innerHTML = nearbyBombs;
+		}
+	}
 }
+
+console.log(gameArray);
 
 function createCell(id) {
 	let cell = document.createElement("div");
 	cell.classList.add("cell", "text-center", "align-middle");
 	cell.setAttribute("id", id);
+
 	let rightWallCell = id % maxCellsRow === maxCellsRow - 1;
 	let leftWallCell = id % maxCellsRow === 0;
 
@@ -72,7 +93,6 @@ function checkCell(id) {
 	}
 
 	if (!rightWallCell && id > 9) {
-		console.log(id + 1 - maxCellsRow);
 		let newCell = document.getElementById(id + 1 - maxCellsRow);
 		if (!checkForBombs(newCell.id)) clickCell(newCell);
 	}
@@ -92,10 +112,10 @@ function generateRandomNumberArray(size) {
 	let numbers = [];
 	while (numbers.length < size) {
 		let number = Math.floor(Math.random() * totalCells);
-		if(number === 0 && !numbers.includes(number)) {
+		if (number === 0 && !numbers.includes(number)) {
 			numbers.push(number);
 		} else {
-			number++
+			number++;
 			if (numbers.includes(number)) {
 				number = Math.floor(Math.random() * totalCells + 1);
 			} else {
