@@ -5,7 +5,7 @@ let gameOver = false;
 let cellNumber = 0;
 let maxCellsRow = 10;
 let totalCells = 100;
-let numberOfBombs = 15;
+let numberOfBombs = 20;
 let bombsArray = generateRandomNumberArray(numberOfBombs);
 let gameArray = [];
 
@@ -121,34 +121,84 @@ function createCell(id) {
 }
 
 function clickCell(id) {
-	let cell = document.getElementById(id.toString());
-	let cellId = parseInt(cell.id);
-	if (checkForBombs(cellId) && !gameOver) {
-		cell.innerHTML = `<i class="fas fa-bomb fs-1 mt-1"></i>`;
-		// return (gameOver = true);
-	} else if (!cell.classList.contains("clicked-cell") && gameArray[id] === 0) {
-		checkCell(cellId);
-	} else {
-		cell.innerHTML = gameArray[id];
+	if (id <= maxCellsRow * maxCellsRow - 1 && id >= 0) {
+		let cell = document.getElementById(id.toString());
+		let cellId = parseInt(cell.id);
+		if (checkForBombs(cellId) && !gameOver) {
+			cell.innerHTML = `<i class="fas fa-bomb fs-1 mt-1"></i>`;
+			// return (gameOver = true);
+		} else if (!cell.classList.contains("clicked-cell")) {
+			cell.innerHTML = gameArray[id];
+			checkCell(cellId);
+		}
+		cell.classList.add("clicked-cell");
 	}
-	cell.classList.add("clicked-cell");
 }
 
 function checkCell(id) {
 	let rightWallCell = id % maxCellsRow === maxCellsRow - 1;
 	let leftWallCell = id % maxCellsRow === 0;
+	let half = (maxCellsRow * maxCellsRow) / 2 - 1;
+	let halfRow = maxCellsRow / 2 - 1;
 	setTimeout(() => {
-		if (id === 0) {
-			clickCell(id + 1);
-		}
-		if (id < maxCellsRow - 1 && id != 0) {
-			clickCell(id + maxCellsRow);
-		}
-		if(!leftWallCell && !rightWallCell) {
-			clickCell(id - 1);
+		if (id <= maxCellsRow * maxCellsRow - 1 && id >= 0) {
+			// If cell is on right wall || cell is on first row || cell is not on first row
+			// || cell is on left wall && cell is on the upper side of the board
+			//  check the cell underneath
+			if (
+				(rightWallCell || id < maxCellsRow || id > maxCellsRow || leftWallCell) &&
+				id <= half &&
+				!checkForBombs(id + maxCellsRow)
+			) {
+				clickCell(id + maxCellsRow);
+			}
+
+			// If cell is on left wall and and on the upper side of the board check the cell above
+			if (leftWallCell && id >= half && !checkForBombs(id - maxCellsRow)) {
+				clickCell(id - maxCellsRow);
+			}
+
+			// If first cell || cell is on left wall but not on the first row ||
+			// cell is on first half of first row check next cell
+			if (
+				(id === 0 || (id > 0 && leftWallCell) || (id < maxCellsRow && id <= halfRow)) &&
+				!checkForBombs(id + 1)
+			) {
+				clickCell(id + 1);
+			}
+
+			// If cell is on right side of first row || cell on right wall and lower that the first row check cell before current cell
+			if (
+				((id < maxCellsRow && id > halfRow) || (rightWallCell && id > maxCellsRow)) &&
+				!checkForBombs(id - 1)
+			) {
+				clickCell(id - 1);
+			}
+
+			// If is last cell check the one diagonal to it
+			if (id === maxCellsRow * maxCellsRow - 1 && !checkForBombs(id - maxCellsRow - 1)) {
+				clickCell(id - maxCellsRow - 1);
+			}
+
+			// If last cell on the left check the one diagonal to it
+			if (
+				id === maxCellsRow * maxCellsRow - maxCellsRow &&
+				!checkForBombs(id + 1 - maxCellsRow)
+			) {
+				clickCell(id + 1 - maxCellsRow);
+			}
+
+			// If last cell on first row check the one diagonal to it
+			if (id < maxCellsRow && rightWallCell && !checkForBombs(id + maxCellsRow - 1)) {
+				clickCell(id + maxCellsRow - 1);
+			}
+
+			// If cell on right wall and lower that half the board check cell above
+			if (rightWallCell && id >= half && !checkForBombs(id - maxCellsRow)) {
+				clickCell(id - maxCellsRow);
+			}
 		}
 	}, 10);
-	
 }
 
 function checkForBombs(id) {
