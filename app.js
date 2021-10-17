@@ -107,7 +107,7 @@ function createCell(id) {
 
 	// Add event for regular click
 	cell.addEventListener("click", (e) => {
-		clickCell(cell);
+		clickCell(cell.id);
 	});
 
 	// Add event for right click
@@ -120,13 +120,16 @@ function createCell(id) {
 	return cell;
 }
 
-function clickCell(cell) {
+function clickCell(id) {
+	let cell = document.getElementById(id.toString());
 	let cellId = parseInt(cell.id);
 	if (checkForBombs(cellId) && !gameOver) {
 		cell.innerHTML = `<i class="fas fa-bomb fs-1 mt-1"></i>`;
 		// return (gameOver = true);
-	} else if (!cell.classList.contains("clicked-cell")) {
+	} else if (!cell.classList.contains("clicked-cell") && gameArray[id] === 0) {
 		checkCell(cellId);
+	} else {
+		cell.innerHTML = gameArray[id];
 	}
 	cell.classList.add("clicked-cell");
 }
@@ -134,20 +137,22 @@ function clickCell(cell) {
 function checkCell(id) {
 	let rightWallCell = id % maxCellsRow === maxCellsRow - 1;
 	let leftWallCell = id % maxCellsRow === 0;
-
-	if (!leftWallCell && id > 0) {
-		let newCell = document.getElementById(id - 1);
-		if (!checkForBombs(newCell.id)) clickCell(newCell);
-	}
-
-	if (!rightWallCell && id > 9) {
-		let newCell = document.getElementById(id + 1 - maxCellsRow);
-		if (!checkForBombs(newCell.id)) clickCell(newCell);
-	}
+	setTimeout(() => {
+		if (id === 0) {
+			clickCell(id + 1);
+		}
+		if (id < maxCellsRow - 1 && id != 0) {
+			clickCell(id + maxCellsRow);
+		}
+		if(!leftWallCell && !rightWallCell) {
+			clickCell(id - 1);
+		}
+	}, 10);
+	
 }
 
 function checkForBombs(id) {
-	return bombsArray.includes(Number.parseInt(id));
+	return bombsArray.includes(parseInt(id));
 }
 
 function createColumn() {
