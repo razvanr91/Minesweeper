@@ -30,15 +30,67 @@ function generateBoard() {
 		}
 	}
 
-	for(let i = 0; i < totalCells; i++) {
+	for (let i = 0; i < totalCells; i++) {
 		let leftWallCell = i % maxCellsRow === 0;
 		let rightWallCell = i % maxCellsRow === maxCellsRow - 1;
 		let nearbyBombs = 0;
-		if(gameArray[i] === "clear") {
-			if(leftWallCell && i < 10 && gameArray[i+maxCellsRow] === "bomb") nearbyBombs++;
-			if(rightWallCell && i > 0 && gameArray[i+maxCellsRow] === "bomb") nearbyBombs++;
-			if(i < 9 && gameArray[i - 1] === "bomb") nearbyBombs++;
-			document.getElementById(i).innerHTML = nearbyBombs;
+		if (gameArray[i] == "clear") {
+			// If it's fist cell
+			if (i === 0) {
+				if (gameArray[1] === "bomb") nearbyBombs++;
+				if (gameArray[i + maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i + maxCellsRow + 1] === "bomb") nearbyBombs++;
+			}
+			// If it's a cell on the left wall and it's smaller than 90 and bigger than 0
+			if (leftWallCell && i < maxCellsRow * maxCellsRow - maxCellsRow && i != 0) {
+				if (gameArray[i - maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i + 1 - maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i + 1] === "bomb") nearbyBombs++;
+				if (gameArray[i + 1 + maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i + maxCellsRow] === "bomb") nearbyBombs++;
+			}
+			// Check for i === 90
+			if (i === maxCellsRow * maxCellsRow - maxCellsRow) {
+				if (gameArray[i - maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i + 1 - maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i + 1] === "bomb") nearbyBombs++;
+			}
+
+			// Check for first cell on right wall
+			if (i === maxCellsRow - 1) {
+				if (gameArray[i - 1] === "bomb") nearbyBombs++;
+				if (gameArray[i - 1 + maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i + maxCellsRow] === "bomb") nearbyBombs++;
+			}
+
+			// Check for all other cell on right wall except for the first and last
+			if (rightWallCell && i > maxCellsRow - 1 && i != maxCellsRow * maxCellsRow - 1) {
+				if (gameArray[i - maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i - 1 - maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i - 1] === "bomb") nearbyBombs++;
+				if (gameArray[i - 1 + maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i + maxCellsRow] === "bomb") nearbyBombs++;
+			}
+
+			// Check for cells that are in the middle
+			if (!leftWallCell && !rightWallCell) {
+				if (gameArray[i - maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i + 1 - maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i + 1] === "bomb") nearbyBombs++;
+				if (gameArray[i + 1 + maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i + maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i - 1 + maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i - 1] === "bomb") nearbyBombs++;
+				if (gameArray[i - 1 - maxCellsRow] === "bomb") nearbyBombs++;
+			}
+
+			// Check for i === 99
+			if (i === maxCellsRow * maxCellsRow - 1) {
+				if (gameArray[i - maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i - 1 - maxCellsRow] === "bomb") nearbyBombs++;
+				if (gameArray[i - 1] === "bomb") nearbyBombs++;
+			}
+			gameArray[i] = nearbyBombs;
 		}
 	}
 }
@@ -85,11 +137,7 @@ function checkCell(id) {
 
 	if (!leftWallCell && id > 0) {
 		let newCell = document.getElementById(id - 1);
-		if (!checkForBombs(newCell.id)) {
-			clickCell(newCell);
-		} else {
-			document.getElementById(id).innerHTML = "1";
-		}
+		if (!checkForBombs(newCell.id)) clickCell(newCell);
 	}
 
 	if (!rightWallCell && id > 9) {
