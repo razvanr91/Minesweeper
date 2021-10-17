@@ -6,8 +6,16 @@ let cellNumber = 0;
 let maxCellsRow = 10;
 let totalCells = 100;
 let numberOfBombs = 20;
+let numberOfFlags = 20;
+let usedFlags = 0;
 let bombsArray = generateRandomNumberArray(numberOfBombs);
 let gameArray = [];
+
+let bombsDisplay = document.getElementById("bombs");
+bombsDisplay.innerHTML = numberOfBombs;
+
+let flagsDisplay = document.getElementById("flags");
+flagsDisplay.innerHTML = numberOfFlags;
 
 resetButton.addEventListener("click", resetGame);
 console.log(bombsArray);
@@ -20,7 +28,6 @@ function generateBoard() {
 		} else {
 			gameArray[i] = "bomb";
 		}
-		cell.innerHTML = gameArray[i];
 		gameBoardRow.append(cell);
 		cellNumber++;
 		if (cellNumber === maxCellsRow) {
@@ -97,13 +104,24 @@ function generateBoard() {
 
 console.log(gameArray);
 
+function checkWin() {
+	let guessedBombs = 0;
+	for (let i = 0; i < bombsArray.length; i++) {
+		let cell = document.getElementById(bombsArray[i].toString());
+		if (cell.classList.contains("flagged")) ++guessedBombs;
+	}
+
+	if (guessedBombs === numberOfBombs) {
+		flagsDisplay.innerHTML = "YOU";
+		bombsDisplay.innerHTML = "WIN";
+		gameOver = true;
+	}
+}
+
 function createCell(id) {
 	let cell = document.createElement("div");
 	cell.classList.add("cell", "text-center", "align-middle");
 	cell.setAttribute("id", id);
-
-	let rightWallCell = id % maxCellsRow === maxCellsRow - 1;
-	let leftWallCell = id % maxCellsRow === 0;
 
 	// Add event for regular click
 	cell.addEventListener("click", (e) => {
@@ -113,22 +131,63 @@ function createCell(id) {
 	// Add event for right click
 	cell.addEventListener("contextmenu", (e) => {
 		e.preventDefault();
-		if (cell.innerHTML === "")
-			cell.innerHTML = `<i class="fas fa-flag fs-1 mt-1 text-danger"></i>`;
+		addFlag(cell);
 	});
 
 	return cell;
 }
 
+function addFlag(cell) {
+	if (gameOver) return;
+	if (!cell.classList.contains("clicked-cell") && usedFlags < numberOfBombs) {
+		if (cell.innerHTML === "") {
+			cell.innerHTML = `<i class="fas fa-flag fs-1 mt-1 text-danger"></i>`;
+			numberOfFlags--;
+			flagsDisplay.innerHTML = numberOfFlags;
+			usedFlags++;
+			cell.classList.add("flagged");
+			checkWin();
+		} else {
+			cell.innerHTML = "";
+			numberOfFlags++;
+			flagsDisplay.innerHTML = numberOfFlags;
+			usedFlags--;
+			cell.classList.remove("flagged");
+		}
+	}
+}
+
 function clickCell(id) {
+	if (gameOver) return;
+
 	if (id <= maxCellsRow * maxCellsRow - 1 && id >= 0) {
 		let cell = document.getElementById(id.toString());
+		cell.classList.add("text-center", "fs-1");
 		let cellId = parseInt(cell.id);
+		if (cell.classList.contains("flagged") || cell.classList.contains("clicked-cell"))
+			return;
 		if (checkForBombs(cellId) && !gameOver) {
 			cell.innerHTML = `<i class="fas fa-bomb fs-1 mt-1"></i>`;
-			// return (gameOver = true);
+			endGame();
+			return (gameOver = true);
 		} else if (!cell.classList.contains("clicked-cell")) {
-			cell.innerHTML = gameArray[id];
+			switch (gameArray[id]) {
+				case 1:
+					cell.classList.add("text-success");
+					break;
+				case 2:
+					cell.classList.add("text-primary");
+					break;
+				case 3:
+				case 4:
+				case 5:
+				case 6:
+				case 7:
+				case 8:
+					cell.classList.add("text-danger");
+					break;
+			}
+			if (gameArray[id] != 0) cell.innerHTML = gameArray[id];
 			checkCell(cellId);
 		}
 		cell.classList.add("clicked-cell");
@@ -140,6 +199,7 @@ function checkCell(id) {
 	let leftWallCell = id % maxCellsRow === 0;
 	let half = (maxCellsRow * maxCellsRow) / 2 - 1;
 	let halfRow = maxCellsRow / 2 - 1;
+	// Set timeout due to error for too many recursions
 	setTimeout(() => {
 		if (id <= maxCellsRow * maxCellsRow - 1 && id >= 0) {
 			// If cell is on right wall || cell is on first row || cell is not on first row
@@ -214,13 +274,13 @@ function createColumn() {
 function generateRandomNumberArray(size) {
 	let numbers = [];
 	while (numbers.length < size) {
-		let number = Math.floor(Math.random() * totalCells);
+		let number = Math.floor(Math.random() * (totalCells - 1));
 		if (number === 0 && !numbers.includes(number)) {
 			numbers.push(number);
 		} else {
 			number++;
 			if (numbers.includes(number)) {
-				number = Math.floor(Math.random() * totalCells + 1);
+				number = Math.floor(Math.random() * (totalCells - 1));
 			} else {
 				numbers.push(number);
 			}
@@ -231,6 +291,20 @@ function generateRandomNumberArray(size) {
 
 function resetGame() {
 	location.reload();
+}
+
+function endGame() {
+	bombsDisplay.innerHTML = "GAME";
+	flagsDisplay.innerHTML = "OVER";
+	gameOver = true;
+	for (let i = 0; i < totalCells; i++) {
+		if (gameArray[i] === "bomb") {
+			let cell = document.getElementById(i);
+			cell.classList.add("clicked-cell");
+			cell.innerHTML = `<i class="fas fa-bomb fs-1 mt-1"></i>`;
+		}
+	}
+	resetButton.innerHTML = `<i class="far fa-sad-cry"></i>`;
 }
 
 generateBoard();
