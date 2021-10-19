@@ -202,34 +202,40 @@ function checkCell(id) {
 	// Set timeout due to error for too many recursions
 	setTimeout(() => {
 		if (id <= maxCellsRow * maxCellsRow - 1 && id >= 0) {
+
+			// If cell is not next to any wall && id is not on the las row
+			if (!rightWallCell && !leftWallCell && (id < maxCellsRow * maxCellsRow - maxCellsRow) && !checkForBombs(id + maxCellsRow)) {
+				clickCell(id+maxCellsRow);
+			}
+
 			// If cell is on right wall || cell is on first row || cell is not on first row
-			// || cell is on left wall && cell is on the upper side of the board
-			//  check the cell underneath
+			// || cell is on left wall check the cell underneath
 			if (
 				(rightWallCell || id < maxCellsRow || id > maxCellsRow || leftWallCell) &&
-				id <= half &&
 				!checkForBombs(id + maxCellsRow)
 			) {
 				clickCell(id + maxCellsRow);
 			}
 
-			// If cell is on left wall and and on the upper side of the board check the cell above
-			if (leftWallCell && id >= half && !checkForBombs(id - maxCellsRow)) {
+			// If cell is on left wall || cell is not next to any wall && is not on first row 
+			// || cell is next to right wall and not on first row Check the cell above
+			if (((leftWallCell) || (!leftWallCell && !rightWallCell && id > maxCellsRow) || (rightWallCell && id > maxCellsRow)) && !checkForBombs(id - maxCellsRow)) {
 				clickCell(id - maxCellsRow);
 			}
 
 			// If first cell || cell is on left wall but not on the first row ||
-			// cell is on first half of first row check next cell
+			// cell is on first row || cell is not next to right wall check the cell to the right
 			if (
-				(id === 0 || (id > 0 && leftWallCell) || (id < maxCellsRow && id <= halfRow)) &&
+				(id === 0 || (id > 0 && leftWallCell) || (id < maxCellsRow ) || (!rightWallCell)) &&
 				!checkForBombs(id + 1)
 			) {
 				clickCell(id + 1);
 			}
 
-			// If cell is on right side of first row || cell on right wall and lower that the first row check cell before current cell
+			// If cell is on first row and is not the first cell || cell is next to the right wall and 
+			// is not on first row check the cell to the left
 			if (
-				((id < maxCellsRow && id > halfRow) || (rightWallCell && id > maxCellsRow)) &&
+				((id < maxCellsRow && id != 0) || (rightWallCell && id > maxCellsRow)) &&
 				!checkForBombs(id - 1)
 			) {
 				clickCell(id - 1);
@@ -253,10 +259,6 @@ function checkCell(id) {
 				clickCell(id + maxCellsRow - 1);
 			}
 
-			// If cell on right wall and lower that half the board check cell above
-			if (rightWallCell && id >= half && !checkForBombs(id - maxCellsRow)) {
-				clickCell(id - maxCellsRow);
-			}
 		}
 	}, 10);
 }
