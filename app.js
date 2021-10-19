@@ -194,8 +194,6 @@ function clickCell(id) {
 function checkCell(id) {
 	let rightWallCell = id % maxCellsRow === maxCellsRow - 1;
 	let leftWallCell = id % maxCellsRow === 0;
-	let half = (maxCellsRow * maxCellsRow) / 2 - 1;
-	let halfRow = maxCellsRow / 2 - 1;
 	// Set timeout due to error for too many recursions
 	setTimeout(() => {
 		if (id <= maxCellsRow * maxCellsRow - 1 && id >= 0) {
