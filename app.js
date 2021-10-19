@@ -18,7 +18,6 @@ let flagsDisplay = document.getElementById("flags");
 flagsDisplay.innerHTML = numberOfFlags;
 
 resetButton.addEventListener("click", resetGame);
-console.log(bombsArray);
 
 function generateBoard() {
 	for (let i = 0; i < totalCells; i++) {
@@ -101,8 +100,6 @@ function generateBoard() {
 		}
 	}
 }
-
-console.log(gameArray);
 
 function checkWin() {
 	let guessedBombs = 0;
